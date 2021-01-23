@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity
                 if(mFirebaseUser != null )
                 {
                     Toast.makeText(MainActivity.this, "You have been logged in",Toast.LENGTH_SHORT).show();
-                    Intent toActivityHome = new Intent(MainActivity.this,ChatActivity.class);
-                    startActivity(toActivityHome);
+                    Intent toMapsActivity = new Intent(MainActivity.this,MapsActivity.class);
+                    startActivity(toMapsActivity);
                 }else
                 {
                     Toast.makeText(MainActivity.this, "Please Login", Toast.LENGTH_SHORT);
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity
                             } else
                             {
                                 startActivity(new Intent(MainActivity.this,
-                                        ChatActivity.class));
+                                        MapsActivity.class));
                             }
                         }
                     });

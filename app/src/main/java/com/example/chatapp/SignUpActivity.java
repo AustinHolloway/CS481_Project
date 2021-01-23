@@ -1,8 +1,6 @@
 package com.example.chatapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,13 +10,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import org.apache.commons.validator.routines.EmailValidator;
 
-import java.sql.Date;
+import java.util.Calendar;
 
 public class SignUpActivity extends AppCompatActivity
 {
@@ -64,6 +66,10 @@ public class SignUpActivity extends AppCompatActivity
 
         instantiateFields(); //create fields
 
+        //TODO: FORMAT DATE AND KICK OUT KIDDOS
+
+        //TODO: CHECK FOR USERNAMES IN FIRE BASE DB
+
         //Listener and auth for the sign up button
         signUpButtonXML.setOnClickListener(new View.OnClickListener()
         {
@@ -74,6 +80,8 @@ public class SignUpActivity extends AppCompatActivity
                 //get input text
                 String email = emailXML.getText().toString().trim();
                 String password = passwordXML.getText().toString().trim();
+                String confPassword = confirmPasswordXML.getText().toString().trim();
+
 
                 //Check for missing input
                 if (email.isEmpty() && password.isEmpty())
@@ -88,6 +96,18 @@ public class SignUpActivity extends AppCompatActivity
                 {
                     emailXML.setError("Please enter your email");
                     emailXML.requestFocus();
+                }else if (EmailValidator.getInstance().isValid(email) == false)
+                {
+                    emailXML.setError("Please enter a valid email");
+                    emailXML.requestFocus();
+                }else if (password.equals(confPassword) == false )
+                {
+                    passwordXML.setError("Passwords must match");
+                    passwordXML.requestFocus();
+                    passwordXML.setText("");
+
+                    confirmPasswordXML.setError("Passwords must match");
+                    confirmPasswordXML.setText("");
                 }else
                 { //try to create authentication
                     mFirebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
@@ -134,7 +154,7 @@ public class SignUpActivity extends AppCompatActivity
                                 });
 
                                 startActivity(new Intent(SignUpActivity.this,
-                                        ChatActivity.class));
+                                        MapsActivity.class));
                             }
                         }
                     });
