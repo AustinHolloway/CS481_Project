@@ -1,5 +1,6 @@
 package com.example.chatapp;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,17 +21,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class SignUpActivity extends AppCompatActivity
 {
 
     //Class fields
     private EditText emailXML, passwordXML, confirmPasswordXML,
-            nameXML, usernameXML, birthdayXML;
-    private Button signUpButtonXML;
+            nameXML, usernameXML;
+    private Button signUpButtonXML, birthdayXML;
     private TextView textToSignInXML;
     private FirebaseAuth mFirebaseAuth;
+    private DatePickerDialog datePickerDialog;
+    private Button dateButton;
 
     //basically a constructor. but a constructor was not okay here.
     private void instantiateFields ()
@@ -38,7 +43,7 @@ public class SignUpActivity extends AppCompatActivity
         //create authentication for firebase
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        //finds the id's in the XML files and sets them to the fields
+        //finds the id's in the XML files and sets them to the field
         emailXML = findViewById(R.id.emailSignUp);
         passwordXML = findViewById(R.id.passwordSignUp);
         signUpButtonXML = findViewById(R.id.buttonSignUp);
@@ -46,7 +51,7 @@ public class SignUpActivity extends AppCompatActivity
         confirmPasswordXML = findViewById(R.id.confirmPasswordSignUp);
         nameXML = findViewById(R.id.legalNameSignUp);
         usernameXML = findViewById(R.id.userNameSignUp);
-        birthdayXML = findViewById(R.id.birthdaySignUp);
+        birthdayXML = findViewById(R.id.datePickerButton);
     }
 
     //On Create happens when opened
@@ -63,10 +68,12 @@ public class SignUpActivity extends AppCompatActivity
         catch (NullPointerException e){}
 
         setContentView(R.layout.activity_sign_up);
+        initDatePicker();
+        dateButton = findViewById(R.id.datePickerButton);
+        dateButton.setText("Birthday");
 
         instantiateFields(); //create fields
-
-        //TODO: FORMAT DATE AND KICK OUT KIDDOS
+        //TODO: FORMAT DATE(DONE) AND KICK OUT KIDDOS
 
         //TODO: CHECK FOR USERNAMES IN FIRE BASE DB
 
@@ -78,17 +85,25 @@ public class SignUpActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 //get input text
+                String name = nameXML.getText().toString().trim();
                 String email = emailXML.getText().toString().trim();
                 String password = passwordXML.getText().toString().trim();
                 String confPassword = confirmPasswordXML.getText().toString().trim();
-
+                String birthday = birthdayXML.getText().toString().trim();
 
                 //Check for missing input
-                if (email.isEmpty() && password.isEmpty())
+                if (email.isEmpty() && password.isEmpty() && name.isEmpty())
                 {
                     emailXML.setError("Please enter your email");
                     passwordXML.setError("Please enter your password");
-                }else if (password.isEmpty())
+                    nameXML.setError("Please enter your name");
+                }
+                else if(name.isEmpty())
+                {
+                    nameXML.setError("Please enter your name");
+                    nameXML.requestFocus();
+                }
+                else if (password.isEmpty())
                 {
                     passwordXML.setError("Please enter your password");
                     passwordXML.requestFocus();
@@ -162,6 +177,7 @@ public class SignUpActivity extends AppCompatActivity
             }
         });
 
+
         textToSignInXML.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -172,11 +188,48 @@ public class SignUpActivity extends AppCompatActivity
         });
     }
 
+    private String getTodaysDate() {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        month = month + 1;
+        return makeDateString(day, month, year);
+
+    }
+
+    private void initDatePicker()
+    {
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                String date = makeDateString(dayOfMonth, month, year);
+                dateButton.setText(date);
+            }
+        };
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int style = AlertDialog.THEME_HOLO_LIGHT;
+        datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+    }
+    private String makeDateString(int day, int month, int year)
+    {
+        return month+ " " + day + " " + year;
+    }
     //currently doesnt do anything.
     @Override
     public void onStart()
     {
         super.onStart();
         if(mFirebaseAuth.getCurrentUser() != null){}
+    }
+
+    public void openDatePicker(View view) {
+        datePickerDialog.show();
     }
 }

@@ -2,8 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Birthday"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".SignUpActivity">
 
     <LinearLayout
@@ -20,12 +22,12 @@
             android:id="@+id/signUpText"
             android:layout_width="347dp"
             android:layout_height="186dp"
+            android:layout_marginTop="-125dp"
             android:gravity="center"
             android:text="Welcome to Peer Connect, Please Fill Out the Info Below to Start Connecting!"
             android:textSize="28dp"
             tools:layout_editor_absoluteX="32dp"
-            tools:layout_editor_absoluteY="19dp"
-            android:layout_marginTop="-125dp"/>
+            tools:layout_editor_absoluteY="19dp" />
 
         <Space
             android:layout_width="match_parent"
@@ -40,6 +42,24 @@
             android:inputType="textPersonName"
             tools:layout_editor_absoluteX="100dp"
             tools:layout_editor_absoluteY="224dp" />
+        <EditText
+            android:id="@+id/userNameSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Username"
+            android:inputType="textPersonName"
+            tools:layout_editor_absoluteX="100dp"
+            tools:layout_editor_absoluteY="389dp" />
+        <EditText
+            android:id="@+id/emailSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Email Address"
+            android:inputType="textEmailAddress"
+            tools:layout_editor_absoluteX="99dp"
+            tools:layout_editor_absoluteY="334dp" />
 
         <EditText
             android:id="@+id/passwordSignUp"
@@ -50,27 +70,6 @@
             android:inputType="textPassword"
             tools:layout_editor_absoluteX="100dp"
             tools:layout_editor_absoluteY="443dp" />
-
-        <EditText
-            android:id="@+id/userNameSignUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Username"
-            android:inputType="textPersonName"
-            tools:layout_editor_absoluteX="100dp"
-            tools:layout_editor_absoluteY="389dp" />
-
-        <EditText
-            android:id="@+id/birthdaySignUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Birthday"
-            android:inputType="date"
-            tools:layout_editor_absoluteX="100dp"
-            tools:layout_editor_absoluteY="279dp" />
-
         <EditText
             android:id="@+id/confirmPasswordSignUp"
             android:layout_width="wrap_content"
@@ -81,15 +80,17 @@
             tools:layout_editor_absoluteX="99dp"
             tools:layout_editor_absoluteY="498dp" />
 
-        <EditText
-            android:id="@+id/emailSignUp"
-            android:layout_width="wrap_content"
+
+        <Button
+            android:id="@+id/datePickerButton"
+            style="?android:spinnerStyle"
+            android:layout_width="228dp"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Email Address"
-            android:inputType="textEmailAddress"
-            tools:layout_editor_absoluteX="99dp"
-            tools:layout_editor_absoluteY="334dp" />
+            android:onClick="openDatePicker"
+            android:text="Birthday"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
 
         <Space
             android:layout_width="match_parent"
