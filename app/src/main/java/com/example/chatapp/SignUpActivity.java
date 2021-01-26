@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -59,15 +60,16 @@ public class SignUpActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState); //Created by android studio
+        setContentView(R.layout.activity_sign_up);
+       // getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         //Remove the title bar
-        try
+        if(this.getSupportActionBar() != null)
         {
             this.getSupportActionBar().hide();
         }
-        catch (NullPointerException e){}
 
-        setContentView(R.layout.activity_sign_up);
+
         initDatePicker();
         dateButton = findViewById(R.id.datePickerButton);
         dateButton.setText("Birthday");

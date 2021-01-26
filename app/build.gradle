@@ -3,6 +3,7 @@ plugins {
 
     //added per firebase request
     id 'com.google.gms.google-services'
+
 }
 
 android {
@@ -44,13 +45,16 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.google.android.material:material:1.1.0'
+
     //import firebase bom
     implementation platform('com.google.firebase:firebase-bom:26.3.0')
-
     // Add the dependency for the Firebase SDK for Google Analytics
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics'
-
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+
+    //for use of gps/ fused location provider. ie current location
+    //implementation 'com.google.android.gms:play-services:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -50,14 +51,13 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
 
-        //Remove the title bar
-        try
-        {
-            this.getSupportActionBar().hide();
-        }
-        catch (NullPointerException e){}
-
         setContentView(R.layout.activity_main);
+
+        //Remove the title bar
+        if(this.getSupportActionBar() != null)
+        {
+           this.getSupportActionBar().hide();
+        }
 
         instantiateFields ();//constructor
 
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity
                 if(mFirebaseUser != null )
                 {
                     Toast.makeText(MainActivity.this, "You have been logged in",Toast.LENGTH_SHORT).show();
-                    Intent toMapsActivity = new Intent(MainActivity.this,MapsActivity.class);
+                    Intent toMapsActivity = new Intent(MainActivity.this, MapsActivity.class);
                     startActivity(toMapsActivity);
                 }else
                 {
