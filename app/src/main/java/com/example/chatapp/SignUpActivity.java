@@ -3,6 +3,7 @@ package com.example.chatapp;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -83,6 +87,7 @@ public class SignUpActivity extends AppCompatActivity
         signUpButtonXML.setOnClickListener(new View.OnClickListener()
         {
             //TODO: ADD MORE DATA SANITATION
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v)
             {
@@ -92,6 +97,10 @@ public class SignUpActivity extends AppCompatActivity
                 String password = passwordXML.getText().toString().trim();
                 String confPassword = confirmPasswordXML.getText().toString().trim();
                 String birthday = birthdayXML.getText().toString().trim();
+                //TODO: CHANGE ERROR LOCATION OF AGE TO NOT BE IN THE SAME SPOT AS DROP DOWN MENU
+                if(tooYoung(birthday)){
+                    birthdayXML.setError("Must be 18 to use this app.");
+                }
 
                 //Check for missing input
                 if (email.isEmpty() && password.isEmpty() && name.isEmpty())
@@ -188,6 +197,36 @@ public class SignUpActivity extends AppCompatActivity
                 startActivity(new Intent (SignUpActivity.this, MainActivity.class));
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean tooYoung(String birthday) {
+        /*String timeStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+        String year = timeStamp.substring(0,4);
+        String month = timeStamp.substring(4,6);
+        String day = timeStamp.substring(6,timeStamp.length());
+        int yearInt = Integer.parseInt(year);
+        int monthInt = Integer.parseInt(month);
+        int dayInt = Integer.parseInt(day); */
+
+        String temp[] = birthday.split(" ");
+        int birthArray[] = new int[temp.length];
+        for (int i = 0; i < temp.length; i++){
+            birthArray[i] = Integer.parseInt(temp[i]);
+        }
+        int birthYear = birthArray[2];
+        int birthMonth = birthArray[0];
+        int birthDayOfMonth = birthArray[1];
+        LocalDate birthDate = LocalDate.of(birthYear, birthMonth, birthDayOfMonth);
+        LocalDate currentDate = LocalDate.now();
+        long age = ChronoUnit.YEARS.between(birthDate, currentDate);
+        if(age < 18){
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
 
     private String getTodaysDate() {
