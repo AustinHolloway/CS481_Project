@@ -71,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 latitude.set(location.getLatitude());
                 longitude.set(location.getLongitude());
             }
-        });
+       });
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(35,62);

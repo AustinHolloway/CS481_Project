@@ -56,5 +56,5 @@ dependencies {
 
     //for use of gps/ fused location provider. ie current location
     //implementation 'com.google.android.gms:play-services:17.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.1.0'
 }
