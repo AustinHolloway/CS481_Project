@@ -4,21 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
 import android.os.Bundle;
+import android.os.Handler;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -29,23 +30,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationListener locationListener;
     private LatLng currentLocation;
 
-    // @Override
-    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
+    @Override
+    //called automatically once permissions were accepted or declined
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-        {
             //must double check for permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED)
+            if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED)
             {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            } else //user hates gps. should throw error saying user cannot use this app w/o gps.
-            {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
+            } else //user hates gps. throws error saying user cannot use this app w/o gps.
+            {
+                Toast.makeText(MapsActivity.this, "GPS is required for chat. Please enable and log in again.",Toast.LENGTH_SHORT).show();
+                Intent toMainActivity = new Intent(MapsActivity.this, MainActivity.class);
+                startActivity(toMainActivity);
             }
-        }
     }
 
     @Override
@@ -64,24 +66,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 currentLocation = new LatLng(location.getLatitude(), location.getLongitude()); //TODO: Set location to database
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(currentLocation).title("Dis you")); //TODO: Change title to the user's username
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,13.5f));
+
+                mMap.addCircle(new CircleOptions()
+                                .center(currentLocation)
+                                .radius(3000 )
+                                .strokeWidth(0f)
+                                .fillColor(0x550000FF));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,12.5f));
 
                 //stop it from regenerating location so location is only found once.
                 locationManager.removeUpdates(this);
             }
         };
 
-            //if no permission ask for permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            //if no permission ask for permission, annoyingly. like keep asking you like a younger sibling
+            if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED)
             {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
-            } else //permission granted. update user location
+            } else //permission granted CONGRATS. update user location.
             {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
-
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -104,5 +111,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         //TODO: Retrive previous location of user from database, for initial pan.
         mMap = googleMap;
+
     }
 }
