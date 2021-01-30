@@ -209,8 +209,8 @@ public class SignUpActivity extends AppCompatActivity
         int monthInt = Integer.parseInt(month);
         int dayInt = Integer.parseInt(day); */
 
-        String temp[] = birthday.split(" ");
-        int birthArray[] = new int[temp.length];
+        String[] temp = birthday.split(" ");
+        int[] birthArray = new int[temp.length];
         for (int i = 0; i < temp.length; i++){
             birthArray[i] = Integer.parseInt(temp[i]);
         }
@@ -220,12 +220,7 @@ public class SignUpActivity extends AppCompatActivity
         LocalDate birthDate = LocalDate.of(birthYear, birthMonth, birthDayOfMonth);
         LocalDate currentDate = LocalDate.now();
         long age = ChronoUnit.YEARS.between(birthDate, currentDate);
-        if(age < 18){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return age < 18;
 
     }
 
