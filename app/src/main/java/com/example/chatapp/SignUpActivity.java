@@ -97,10 +97,6 @@ public class SignUpActivity extends AppCompatActivity
                 String password = passwordXML.getText().toString().trim();
                 String confPassword = confirmPasswordXML.getText().toString().trim();
                 String birthday = birthdayXML.getText().toString().trim();
-                //TODO: CHANGE ERROR LOCATION OF AGE TO NOT BE IN THE SAME SPOT AS DROP DOWN MENU
-                if(tooYoung(birthday)){
-                    birthdayXML.setError("Must be 18 to use this app.");
-                }
 
                 //Check for missing input
                 if (email.isEmpty() && password.isEmpty() && name.isEmpty())
@@ -108,6 +104,9 @@ public class SignUpActivity extends AppCompatActivity
                     emailXML.setError("Please enter your email");
                     passwordXML.setError("Please enter your password");
                     nameXML.setError("Please enter your name");
+                }
+                else if(tooYoung(birthday)){
+                    birthdayXML.setError("Must be 18 to use this app.");
                 }
                 else if(name.isEmpty())
                 {
@@ -201,13 +200,6 @@ public class SignUpActivity extends AppCompatActivity
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean tooYoung(String birthday) {
-        /*String timeStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
-        String year = timeStamp.substring(0,4);
-        String month = timeStamp.substring(4,6);
-        String day = timeStamp.substring(6,timeStamp.length());
-        int yearInt = Integer.parseInt(year);
-        int monthInt = Integer.parseInt(month);
-        int dayInt = Integer.parseInt(day); */
 
         String[] temp = birthday.split(" ");
         int[] birthArray = new int[temp.length];
