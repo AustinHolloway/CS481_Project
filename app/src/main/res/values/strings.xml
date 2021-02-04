@@ -4,8 +4,6 @@
 <<<<<<< Updated upstream
     <string name="loading">Please Wait...</string>
 =======
-
     <string name="loading">Triangulating.\n Please Wait</string>
 >>>>>>> Stashed changes
-
 </resources>
