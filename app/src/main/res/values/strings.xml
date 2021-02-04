@@ -2,4 +2,9 @@
     <string name="app_name">ChatApp</string>
     <string name="title_activity_maps">Map</string>
     <string name="loading">Triangulating.\n Please Wait</string>
+    <string name="username">Username</string>
+    <string name="user_email">User Email</string>
+    <string name="theirName">Name</string>
+    <string name="logout">Logout</string>
+    <string name="Reset_Password">Reset Password</string>
 </resources>
