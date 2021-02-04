@@ -60,6 +60,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressBar.setVisibility(View.VISIBLE);
 
         setContentView(R.layout.activity_maps);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener()
@@ -73,12 +75,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 mMap.addCircle(new CircleOptions()
                                 .center(currentLocation)
-                                .radius(3000 )
+                                .radius(3000)
                                 .strokeWidth(0f)
                                 .fillColor(0x550000FF));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,12.5f));
                 progressBar.setVisibility(View.GONE);
 
+                progressBar.setVisibility(View.GONE);
                 //stop it from regenerating location so location is only found once.
                 locationManager.removeUpdates(this);
             }
