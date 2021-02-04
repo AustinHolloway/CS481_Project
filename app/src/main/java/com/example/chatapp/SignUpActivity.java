@@ -41,6 +41,7 @@ public class SignUpActivity extends AppCompatActivity
     private FirebaseAuth mFirebaseAuth;
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
+    private View progressBar;
 
     //basically a constructor. but a constructor was not okay here.
     private void instantiateFields ()
@@ -57,6 +58,7 @@ public class SignUpActivity extends AppCompatActivity
         nameXML = findViewById(R.id.legalNameSignUp);
         usernameXML = findViewById(R.id.userNameSignUp);
         birthdayXML = findViewById(R.id.datePickerButton);
+        progressBar = findViewById(R.id.progressBar);
     }
 
     //On Create happens when opened
@@ -135,6 +137,7 @@ public class SignUpActivity extends AppCompatActivity
                     confirmPasswordXML.setText("");
                 }else
                 { //try to create authentication
+                    progressBar.setVisibility(View.VISIBLE);
                     mFirebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
                             SignUpActivity.this, new OnCompleteListener<AuthResult>()
                     {
@@ -142,6 +145,7 @@ public class SignUpActivity extends AppCompatActivity
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task)
                         {
+                            progressBar.setVisibility(View.GONE);
                             if(!task.isSuccessful())
                             {
                                 Toast.makeText(SignUpActivity.this,
@@ -185,6 +189,8 @@ public class SignUpActivity extends AppCompatActivity
                     });
                 }
             }
+
+
         });
 
 
@@ -196,6 +202,7 @@ public class SignUpActivity extends AppCompatActivity
                 startActivity(new Intent (SignUpActivity.this, MainActivity.class));
             }
         });
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

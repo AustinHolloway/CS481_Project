@@ -13,6 +13,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,6 +30,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng currentLocation;
+    private View progressBar;
 
     @Override
     //called automatically once permissions were accepted or declined
@@ -53,7 +55,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        progressBar = findViewById(R.id.progressBar);
         super.onCreate(savedInstanceState);
+        progressBar.setVisibility(View.VISIBLE);
 
         setContentView(R.layout.activity_maps);
 
@@ -73,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .strokeWidth(0f)
                                 .fillColor(0x550000FF));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,12.5f));
+                progressBar.setVisibility(View.GONE);
 
                 //stop it from regenerating location so location is only found once.
                 locationManager.removeUpdates(this);
