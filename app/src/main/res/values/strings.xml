@@ -7,4 +7,6 @@
     <string name="theirName">Name</string>
     <string name="logout">Logout</string>
     <string name="Reset_Password">Reset Password</string>
+    <string name="send_friend_request">Send Friend Request</string>
+    <string name="cancel_request">Cancel Request</string>
 </resources>
