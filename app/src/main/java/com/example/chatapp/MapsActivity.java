@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +25,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -60,6 +64,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
+
+        TabLayout tabLayout = findViewById(R.id.tabBar);
+        TabItem tabMap = findViewById(R.id.tabMap);
+        TabItem tabMessages = findViewById(R.id.tabMessages);
+        TabItem tabRequests = findViewById(R.id.tabRequests);
+        TabItem tabFindFriends = findViewById(R.id.tabFindFriends);
+        ViewPager viewPager = findViewById(R.id.viewPager);
+
+        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(pagerAdapter);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener()
@@ -118,4 +132,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
     }
+
 }
