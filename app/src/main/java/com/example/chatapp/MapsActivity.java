@@ -35,8 +35,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationListener locationListener;
     private LatLng currentLocation;
     private View progressBar;
-
-    @Override
+    TabLayout tabLayout;
+@Override
     //called automatically once permissions were accepted or declined
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
     {
@@ -62,18 +62,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
+
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
-        TabLayout tabLayout = findViewById(R.id.tabBar);
-        TabItem tabMap = findViewById(R.id.tabMap);
-        TabItem tabMessages = findViewById(R.id.tabMessages);
-        TabItem tabRequests = findViewById(R.id.tabRequests);
-        TabItem tabFindFriends = findViewById(R.id.tabFindFriends);
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabBar);
 
-        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(pagerAdapter);
+        tabLayout.addTab(tabLayout.newTab().setText("Map"));
+        tabLayout.addTab(tabLayout.newTab().setText("Chat"));
+        tabLayout.addTab(tabLayout.newTab().setText("Alerts"));
+        tabLayout.addTab(tabLayout.newTab().setText("Find"));
+        tabLayout.addTab(tabLayout.newTab().setText("About"));
+
+        //makes chat that good purp
+        tabLayout.getTabAt(0).select();
+
+        //TODO:Set up remove it when done
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+        {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int tabPos = tabLayout.getSelectedTabPosition();
+                switch (tabPos){
+                    case 0:{
+                        //startActivity(new Intent(MapsActivity.this,MapsActivity.this));
+                    }
+                    case 1:{
+                        startActivity(new Intent(MapsActivity.this, ChatActivity.class));
+                    }
+                    case 2:{}
+                    case 3:{}
+                    case 4:{startActivity(new Intent(MapsActivity.this, ProfileActivity.class));}
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener()
@@ -113,6 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
 
@@ -132,5 +167,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
     }
+
 
 }
