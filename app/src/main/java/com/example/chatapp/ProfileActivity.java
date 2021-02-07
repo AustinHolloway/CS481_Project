@@ -11,12 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
+/*
 public class ProfileActivity extends AppCompatActivity {
 
     private EditText emailXML, nameXML, usernameXML;
@@ -30,6 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
 
     private Uri localFileUri, serverFileUri;
+    TabLayout tabLayout;
 
     //so user can logout
     public void btnLogoutclick(View view)
@@ -43,9 +45,59 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        //Remove the title bar
+        if(this.getSupportActionBar() != null)
+        {
+            this.getSupportActionBar().hide();
+        }
+
+        tabLayout = (TabLayout) findViewById(R.id.tabBar);
+
+        tabLayout.addTab(tabLayout.newTab().setText("Map"));
+        tabLayout.addTab(tabLayout.newTab().setText("Chat"));
+        tabLayout.addTab(tabLayout.newTab().setText("Alerts"));
+        tabLayout.addTab(tabLayout.newTab().setText("Find"));
+        tabLayout.addTab(tabLayout.newTab().setText("About"));
+
+        //makes about that good purp
+        tabLayout.getTabAt(4).select();
+
+        //TODO:Set up remove it when done
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+        {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int tabPos = tabLayout.getSelectedTabPosition();
+               // tabLayout.clearOnTabSelectedListeners();
+                switch (tabPos) {
+                    case 0: {
+                        tabLayout.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ProfileActivity.this, MapsActivity.class));
+                    }
+                    case 1: {
+                        tabLayout.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ProfileActivity.this, ChatActivity.class));
+                    }
+                    case 2: {
+                    }
+                    case 3: {
+                    }
+                    case 4: {
+                        //   startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));}
+                    }
+
+                }
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
 
         emailXML = findViewById(R.id.emailSignUp);
         nameXML = findViewById(R.id.legalNameSignUp);
@@ -75,8 +127,8 @@ public class ProfileActivity extends AppCompatActivity {
                         .into(ivProfile);
             }
         }
-    }
+   }
 
 
 
-}
+}*/

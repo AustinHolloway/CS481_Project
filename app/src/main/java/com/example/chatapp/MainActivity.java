@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+
                 //get input text
                 String email = emailXML.getText().toString();
                 String password = passwordXML.getText().toString();

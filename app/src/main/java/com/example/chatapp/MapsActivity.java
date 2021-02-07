@@ -28,15 +28,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.concurrent.TimeUnit;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
+{
 
     private GoogleMap mMap;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng currentLocation;
     private View progressBar;
-
-    @Override
+    TabLayout tabLayout;
+@Override
     //called automatically once permissions were accepted or declined
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
     {
@@ -62,18 +65,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
+
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
-        TabLayout tabLayout = findViewById(R.id.tabBar);
-        TabItem tabMap = findViewById(R.id.tabMap);
-        TabItem tabMessages = findViewById(R.id.tabMessages);
-        TabItem tabRequests = findViewById(R.id.tabRequests);
-        TabItem tabFindFriends = findViewById(R.id.tabFindFriends);
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabBar);
 
-        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(pagerAdapter);
+        tabLayout.addTab(tabLayout.newTab().setText("Map"));
+        tabLayout.addTab(tabLayout.newTab().setText("Chat"));
+        tabLayout.addTab(tabLayout.newTab().setText("Alerts"));
+        tabLayout.addTab(tabLayout.newTab().setText("Find"));
+        tabLayout.addTab(tabLayout.newTab().setText("About"));
+
+        //makes map that good purp
+        tabLayout.getTabAt(0).select();
+
+        //TODO:Set up remove it when done
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+        {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab)
+            {
+                int tabPos = tabLayout.getSelectedTabPosition();
+
+                switch (tabPos)
+                {
+                    case 0: { break; }
+                    case 1:
+                    {
+                        tabLayout.clearOnTabSelectedListeners();
+                        startActivity(new Intent(MapsActivity.this, ChatActivity.class));
+                    }
+                    case 2:{}
+                    case 3:{}
+                    case 4:
+                    {
+                       // startActivity(new Intent(MapsActivity.this, ProfileActivity.class));
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener()
@@ -92,7 +128,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .fillColor(0x550000FF));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,12.5f));
 
+                //dont load in africa
+                try {
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 progressBar.setVisibility(View.GONE);
+
                 //stop it from regenerating location so location is only found once.
                 locationManager.removeUpdates(this);
             }
@@ -113,6 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
 
@@ -132,5 +177,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
     }
+
 
 }
