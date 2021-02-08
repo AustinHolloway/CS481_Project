@@ -72,5 +72,11 @@ dependencies {
     // image circular view
     implementation 'com.mikhaellopez:circularimageview:3.0.2'
 
+    //find gps locations w/in range
+   // implementation 'com.firebase:geofire-java:3.0.0'
+
+    // Full GeoFire library for Realtime Database users
+    implementation 'com.firebase:geofire-android:3.1.0'
+
 
 }

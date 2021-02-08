@@ -1,6 +1,7 @@
 package com.example.chatapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -18,6 +19,10 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,9 +30,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
@@ -39,6 +51,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentLocation;
     private View progressBar;
     TabLayout tabLayout;
+    private Boolean moreUsers = true;
+
+    private DatabaseReference mRootRef;
+    private FirebaseAuth firebaseAuth;
+    private String currUsrId;
 @Override
     //called automatically once permissions were accepted or declined
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
@@ -119,14 +136,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             {
                 currentLocation = new LatLng(location.getLatitude(), location.getLongitude()); //TODO: Set location to database
                 mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(currentLocation).title("Dis you")); //TODO: Change title to the user's username
 
                 mMap.addCircle(new CircleOptions()
                                 .center(currentLocation)
-                                .radius(3000)
+                                .radius(15000)
                                 .strokeWidth(0f)
                                 .fillColor(0x550000FF));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,12.5f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,10f));
 
                 //dont load in africa
                 try {
@@ -135,12 +151,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     e.printStackTrace();
                 }
 
-                progressBar.setVisibility(View.GONE);
 
                 //stop it from regenerating location so location is only found once.
                 locationManager.removeUpdates(this);
-            }
-        };
+
+                //remove spinney wheel
+                progressBar.setVisibility(View.GONE);
+
+                DatabaseReference ref =FirebaseDatabase.getInstance().getReference("GPS_COOR");
+
+                //setup geofire (it is to fid w/in given location)
+                GeoFire geoFire = new GeoFire(ref);
+
+                //get userId
+                String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                //set location
+                geoFire.setLocation(uId, new GeoLocation(currentLocation.latitude, currentLocation.longitude));
+
+                //qwery database for radius of 51 km?
+                GeoQuery query = geoFire.queryAtLocation(new GeoLocation(currentLocation.latitude, currentLocation.longitude), 51);
+
+                        query.addGeoQueryEventListener(new GeoQueryEventListener() {
+
+                            @Override
+                            public void onKeyEntered(String key, GeoLocation loc) {
+
+                                //key is userID
+                                LatLng currentInRange = new LatLng(loc.latitude, loc.longitude);
+
+                                mMap.addMarker(new MarkerOptions().position(currentInRange).title("Dis you"));
+                            }
+
+                            @Override
+                            public void onKeyExited(String key) {}
+
+                            @Override
+                            public void onKeyMoved(String key, GeoLocation location) {}
+
+                            @Override
+                            public void onGeoQueryReady() {}
+
+                            @Override
+                            public void onGeoQueryError(DatabaseError error) {}
+                        });
+                }
+            };
 
             //if no permission ask for permission, annoyingly. like keep asking you like a younger sibling
             if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -175,8 +231,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         //TODO: Retrive previous location of user from database, for initial pan.
         mMap = googleMap;
-
     }
-
-
 }
