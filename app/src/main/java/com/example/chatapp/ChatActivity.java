@@ -48,7 +48,7 @@ private TextView msgText;
         tabLayout.addTab(tabLayout.newTab().setText("Find"));
         tabLayout.addTab(tabLayout.newTab().setText("About"));
 
-        //makes chat that good purp
+        //makes chat that good purple
         tabLayout.getTabAt(1).select();
 
         iconAttach = findViewById(R.id.iconAttachment);
@@ -60,19 +60,6 @@ private TextView msgText;
     //    mRootRef = FirebaseDatabase.getInstance().getReference();
 
     //    currUsrId = firebaseAuth.getCurrentUser().getUid();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -90,12 +77,13 @@ private TextView msgText;
                          tabLayout.clearOnTabSelectedListeners();
                         startActivity(new Intent(ChatActivity.this, MapsActivity.class));
                     }
-                    case 1: { break; }
-                    case 2:{}
-                    case 3:{}
+                    case 1:{break;}
+                    case 2:{break;}
+                    case 3:{break;}
                     case 4:
                     {
-                     //   startActivity(new Intent(ChatActivity.this, ProfileActivity.class));
+                        tabLayout.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ChatActivity.this, ProfileActivity.class));
                     }
                 }
             }
