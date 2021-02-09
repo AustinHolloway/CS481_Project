@@ -2,11 +2,31 @@ package com.example.chatapp;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.chatapp.findfriends.FindFriendAdapter;
+import com.example.chatapp.findfriends.FindFriendModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +34,15 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class RequestsFragment extends Fragment {
+
+    private RecyclerView rvFindFriends;
+    private FindFriendAdapter findFriendAdapter;
+    private List<FindFriendModel> findFriendModelList;
+    private TextView tvEmptyFriendsList;
+
+    private DatabaseReference databaseReference;
+    private FirebaseUser currentUser;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,5 +89,58 @@ public class RequestsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_requests, container, false);
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        rvFindFriends = view.findViewById(R.id.rvFindFriends);
+        tvEmptyFriendsList = view.findViewById(R.id.tvEmptyFriendsList);
+
+        rvFindFriends.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        findFriendModelList = new ArrayList<>();
+        findFriendAdapter = new FindFriendAdapter(getActivity(), findFriendModelList);
+        rvFindFriends.setAdapter(findFriendAdapter);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.USERS);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        tvEmptyFriendsList.setVisibility(View.VISIBLE);
+
+        Query query = databaseReference.orderByChild(NodeNames.NAME);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                findFriendModelList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String userId = ds.getKey();
+
+                    if (userId.equals(currentUser.getUid())) {
+                        return;
+                    }
+
+                    if (ds.child(NodeNames.NAME).getValue() != null) {
+                        String fullName = ds.child(NodeNames.NAME).getValue().toString();
+                        String photoName = ds.child(NodeNames.PHOTO).getValue().toString();
+
+                        findFriendModelList.add(new FindFriendModel(fullName, photoName, userId, false));
+                        findFriendAdapter.notifyDataSetChanged();
+
+                        tvEmptyFriendsList.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), getContext().getString(R.string.failed_to_fetch_friends, error.getMessage())
+                        , Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
     }
 }
