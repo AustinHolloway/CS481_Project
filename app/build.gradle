@@ -78,5 +78,8 @@ dependencies {
     // Full GeoFire library for Realtime Database users
     implementation 'com.firebase:geofire-android:3.1.0'
 
+    //use firebase listadapter
+    implementation 'com.firebaseui:firebase-ui:0.6.0'
+
 
 }

@@ -5,24 +5,48 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.firebase.geofire.LocationCallback;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+
+import static com.google.firebase.auth.FirebaseAuth.*;
 
 public class ChatActivity extends AppCompatActivity// implements View.OnClickListener
 {
 private ImageView iconAttach, iconSend;
-private TextView msgText;
+private EditText msgText;
+private ListView msgList;
+private FirebaseListAdapter<ChatMessages> fbListAdapter;
+private    GeoLocation currLocation;
+//private GeoQuery query;
 //private DatabaseReference mRootRef;
 //private FirebaseAuth firebaseAuth;
 //private String currUsrId, chatUsrId;
@@ -51,29 +75,197 @@ private TextView msgText;
         //makes chat that good purp
         tabLayout.getTabAt(1).select();
 
-        iconAttach = findViewById(R.id.iconAttachment);
-        iconSend = findViewById(R.id.iconSend);
-        msgText = findViewById(R.id.messageInputTxt);
+        iconAttach = findViewById(R.id.iconAttachment); //will be for attaching pics
+        iconSend = findViewById(R.id.iconSend); //send arrow
+        msgText = findViewById(R.id.messageInputTxt); //message you want to send
+        msgList = findViewById(R.id.listViewMsg); //chat msg list
 
-      //  iconSend.setOnClickListener(this);
-      //  firebaseAuth = FirebaseAuth.getInstance();
-    //    mRootRef = FirebaseDatabase.getInstance().getReference();
+        ////////////////////////////////////////////////////////////////////////////
+        /// models.remove(position);
+        // LatLng currentInRange;
+        //  TextView msgTxt;
+        // TextView usrId;
+        // TextView msgTime;
 
-    //    currUsrId = firebaseAuth.getCurrentUser().getUid();
+        //    DatabaseReference db = FirebaseDatabase.getInstance()
+        //          .getReference("UserInfo");
+        ArrayList<String> userIDs = new ArrayList<>();
+        DatabaseReference refGPS = FirebaseDatabase.getInstance().getReference("GPS_COOR");
 
-
-
-
-
-
-
-
-
-
-
-
+        //setup geofire (it is to fid w/in given location)
+        GeoFire geoFire = new GeoFire(refGPS);
+        //(getInstance().getCurrentUser().getUid() LatLng currentInRange
 
 
+        //get userId
+        String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        geoFire.getLocation(uId, new LocationCallback()
+        {
+            @Override
+            //gets user coordinates then finds all users in given range
+            public void onLocationResult(String key, GeoLocation location)
+            {
+                //all users in a given range
+                if (location != null)
+                {
+                    currLocation = location;
+                    //  GeoQuery query = geoFire.queryAtLocation(new GeoLocation(location.latitude, location.longitude), 51);
+
+                    //   query.addGeoQueryEventListener(new GeoQueryEventListener() {
+
+                    //        @Override
+                    //       public void onKeyEntered(String key, GeoLocation loc) //key is userID
+                    //        {
+                    //            userIDs.add(key);
+                    //        }
+
+                    //       @Override
+                    //      public void onKeyExited(String key) {
+                    //       }
+
+                    //        @Override
+                    //        public void onKeyMoved(String key, GeoLocation location) {
+                    //       }
+
+                    //        @Override
+                       //     public void onGeoQueryReady() {
+                    //        }
+
+                    //       @Override
+                    //       public void onGeoQueryError(DatabaseError error) {
+                    //           System.out.println("DATA BASE ERROR   " + error.getMessage());
+                    //       }
+                    //   });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+
+
+        iconSend.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+               String userId =  getInstance()
+                        .getCurrentUser()
+                        .getUid();
+
+                final String[] nameStr = new String[1];
+
+               Query name = FirebaseDatabase.getInstance().getReference("UserInfo");
+
+               name.addListenerForSingleValueEvent(new ValueEventListener()
+               {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                   {
+                       for (DataSnapshot postSnapshot: dataSnapshot.getChildren())
+                       {
+                        String temp = postSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").getValue().toString();
+
+
+                        System.out.println(temp);
+                       }
+
+                   }
+
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError error) {}
+               });
+
+                FirebaseDatabase.getInstance()
+                        .getReference("Group_Msgs")
+                        .push()
+                        .setValue(new ChatMessages(msgText.getText().toString(),userId
+                                , nameStr[0], currLocation));
+
+                msgText.setText("");
+            }
+        });
+
+
+
+///////////////////////////////////////////////////////////////////////////////////
+
+        //fbListAdapter = new FirebaseListAdapter<ChatMessages>(ChatActivity.this,
+        //        ChatMessages.class, R.layout.fragment_chat_message, FirebaseDatabase.getInstance()
+        //        .getReference("Group_Msgs"))
+
+//FirebaseListOptions <ChatMessages> options;// = new FirebaseListOptions.Builder<ChatMessages>().setQuery("Group_Msgs", ChatMessages.class)
+        ;
+
+
+
+        DatabaseReference refGroupMsg =   FirebaseDatabase.getInstance().getReference("Group_Msgs");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        fbListAdapter = new FirebaseListAdapter<ChatMessages>(ChatActivity.this,
+                ChatMessages.class, R.layout.fragment_chat_message, FirebaseDatabase.getInstance()
+                .getReference("Group_Msgs"))
+        {
+
+            @Override
+            protected void populateView(View v, ChatMessages model, int position)
+            {}
+
+
+        };
+
+        //LatLng currentInRange = new LatLng(loc.latitude, loc.longitude);
+        //  TextView msgTxt = v.findViewById(R.id.msgText);
+        //  TextView usrId = v.findViewById(R.id.msguserID);
+        //   TextView msgTime = v.findViewById(R.id.msgTime);
+
+        // String date = String.format("MM/dd/yyyy H:mm", model.getMsgTime());
+
+
+        // long fifteenMin = model.getMsgTime() + 900000;
+
+//key.equals(model.getMsgUsr())&&  (fifteenMin <= System.currentTimeMillis()) check if the user is in the area
+
+        //if (true) {
+
+        //   TextView msgTxt = v.findViewById(R.id.msgText);
+        //   TextView usrId = v.findViewById(R.id.msguserID);
+        //   TextView msgTime = v.findViewById(R.id.msgTime);
+//
+        //   msgTxt.setText(model.getMsgText());
+        //   usrId.setText(model.getMsgUsr());
+
+        //set message time
+        //   SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss");
+        //   msgTime.setText(formatter.format(model.getMsgTime()));
+
+        //   }
+
+
+        //fbListAdapter.forEach(function(){});
+      //  DatabaseReference item = fbListAdapter.getRef(1);
+      //  item.removeValue();
+
+        if (fbListAdapter != null)
+        msgList.setAdapter(fbListAdapter); //sets the messages to the chat
+
+       // msgList.removeViewAt(1);
 
 
         //TODO:Set up remove it when done
@@ -107,59 +299,3 @@ private TextView msgText;
         });
     }
 }
-/*
-    //pushId is the id for the message
-    public void sendMessage(String message, String messageType, String idToPush)
-    {
-try{
-    if (!message.equals("")){
-
-        HashMap hashMapMessage = new HashMap();
-        hashMapMessage.put("MessageID", idToPush);
-        hashMapMessage.put("Message", message);
-        hashMapMessage.put("MessageType", messageType);
-        //might need to timestamp
-
-        String currUsrRf = "Conversation" + "/" + currUsrId + "/" + chatUsrId;
-        String chatUsrRf = "Conversation" + "/" + chatUsrId + "/" + currUsrId;
-
-        HashMap msgUsrMap = new HashMap();
-        msgUsrMap.put(currUsrRf + "/" + idToPush, hashMapMessage);
-        msgUsrMap.put(chatUsrRf + "/" + idToPush, hashMapMessage);
-
-        msgText.setText("...");
-
-        mRootRef.updateChildren(msgUsrMap, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                if (error != null){
-                    Toast.makeText(ChatActivity.this, "Database error. Resend message.", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(ChatActivity.this, "Message has been sent.", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-}catch(Exception e){
-    Toast.makeText(ChatActivity.this, "Database error. Resend message.", Toast.LENGTH_LONG).show();
-}
-
-
-    }
-
-
-    @Override
-    public void onClick(View v) {
-switch (v.getId()){
-    case R.id.iconSend:{
-        //TODO: add Util.connection avalible
-        DatabaseReference usrMsgPsh = mRootRef.child("Conversation").child(currUsrId).child(chatUsrId).push();
-        String pshId = usrMsgPsh.getKey();
-        sendMessage(msgText.toString().trim(), "text", pshId);
-    }
-
-}
-    }
-
-
-}*/
