@@ -11,4 +11,18 @@
     <string name="cancel_request">Cancel Request</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="failed_to_fetch_friends">Failed to fetch friends : %l$s</string>
+    <string name="empty_requests_list">Friend requests will appear here</string>
+    <string name="empty_friends_list">Freinds list will appear here</string>
+=======
+    <string name="change_password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="save_password">Confirm Password</string>
+    <string name="Change_Password">Change Password</string>
+    <string name="changepassword">Confirm password</string>
+    <string name="password_mismatch">password mismatch</string>
+    <string name="password_change_successfully">Password Change Successfully</string>
+    <string name="something_went_wrong">Something went wrong : %1$s</string>
+>>>>>>> Stashed changes
 </resources>
