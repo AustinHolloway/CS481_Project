@@ -24,5 +24,9 @@
     <string name="password_mismatch">password mismatch</string>
     <string name="password_change_successfully">Password Change Successfully</string>
     <string name="something_went_wrong">Something went wrong : %1$s</string>
->>>>>>> Stashed changes
+    <string name="request_sent_successfully">Request Sent Succesfully</string>
+    <string name="failed_to_send_request">Failed to send request : %1$s</string>
+    <string name="request_cancelled_successfully">Request Cancelled Successfully</string>
+    <string name="failed_to_cancel_request">Failed to cancel request : %1$s</string>
+    >>>>>>> Stashed changes
 </resources>
