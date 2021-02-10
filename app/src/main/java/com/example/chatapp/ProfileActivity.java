@@ -17,30 +17,24 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-/*
+
 public class ProfileActivity extends AppCompatActivity {
 
-    private EditText emailXML, nameXML, usernameXML;
-    private String email, name, username;
-    private TextView textToSignInXML;
+    private EditText emailXML, nameXML;
     private FirebaseAuth mFirebaseAuth;
-    private ImageView ivProfile;
+   // private ImageView ivProfile;
 
-    private StorageReference fileStorage;
+    //private StorageReference fileStorage;
     private FirebaseUser firebaseUser;
-    private DatabaseReference databaseReference;
+    //private DatabaseReference databaseReference;
 
-    private Uri localFileUri, serverFileUri;
+    //private Uri localFileUri, serverFileUri;
     TabLayout tabLayout;
 
-    //so user can logout
-    public void btnLogoutclick(View view)
+
+    public void btnChangePassword(View view)
     {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signOut();
-        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-        //finish---- cant click back arrow to go back to profile page
-        finish();
+        startActivity(new Intent(ProfileActivity.this, ChangePasswordActivity.class));
     }
 
 
@@ -64,7 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Find"));
         tabLayout.addTab(tabLayout.newTab().setText("About"));
 
-        //makes about that good purp
+        //makes about that good purple
         tabLayout.getTabAt(4).select();
 
         //TODO:Set up remove it when done
@@ -83,12 +77,11 @@ public class ProfileActivity extends AppCompatActivity {
                         tabLayout.clearOnTabSelectedListeners();
                         startActivity(new Intent(ProfileActivity.this, ChatActivity.class));
                     }
-                    case 2: {
-                    }
-                    case 3: {
-                    }
+                    case 2: {break;}
+                    case 3: {break;}
                     case 4: {
-                        //   startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));}
+                        tabLayout.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));
                     }
 
                 }
@@ -98,24 +91,25 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+        /**
+         * uncommenting will fuck it all up, profile tab works when all commented out
+         * Im leaving it here for now, ill figure it out later but it works
+        //emailXML = findViewById(R.id.userEmail);
+        //nameXML = findViewById(R.id.legalNameSignUp);
+        //ivProfile = findViewById(R.id.ivProfile);
 
-        emailXML = findViewById(R.id.emailSignUp);
-        nameXML = findViewById(R.id.legalNameSignUp);
-        usernameXML = findViewById(R.id.userNameSignUp);
-        ivProfile = findViewById(R.id.ivProfile);
+        //fileStorage = FirebaseStorage.getInstance().getReference();
 
-        fileStorage = FirebaseStorage.getInstance().getReference();
-
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = mFirebaseAuth.getCurrentUser();
-
+        //mFirebaseAuth = FirebaseAuth.getInstance();
+        //firebaseUser = mFirebaseAuth.getCurrentUser();
+        **/
         if(firebaseUser!=null)
         {
             //display users info
             nameXML.setText(firebaseUser.getDisplayName());
-            emailXML.setText(firebaseUser.getDisplayName());
-            usernameXML.setText(firebaseUser.getDisplayName());
-            serverFileUri = firebaseUser.getPhotoUrl();
+            emailXML.setText(firebaseUser.getEmail());
+            /**
+            // serverFileUri = firebaseUser.getPhotoUrl();
 
             //use glide library to show users image, if no picture is select or error happen, defualt picture will show
             if(serverFileUri!=null)
@@ -126,9 +120,20 @@ public class ProfileActivity extends AppCompatActivity {
                         .error(R.drawable.default_picture)
                         .into(ivProfile);
             }
+             **/
         }
    }
 
+    //so user can logout
+    public void btnLogoutclick(View view)
+    {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth.signOut();
+        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+        //finish---- cant click back arrow to go back to profile page
+        finish();
+    }
 
 
-}*/
+
+}

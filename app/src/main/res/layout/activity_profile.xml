@@ -15,10 +15,11 @@
     </com.google.android.material.tabs.TabLayout>
 
     <LinearLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/ivProfile"
@@ -37,12 +38,6 @@
             android:hint="@string/theirName" />
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/userName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/username" />
-
-        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,6 +47,7 @@
             android:id="@+id/btnResestPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="btnChangePassword"
             android:text="@string/Reset_Password"
             tools:layout_editor_absoluteX="123dp"
             tools:layout_editor_absoluteY="578dp" />
@@ -62,6 +58,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/holo_red_dark"
             android:backgroundTint="#F80202"
+            android:onClick="btnLogoutclick"
             android:text="@string/logout"
             tools:layout_editor_absoluteX="159dp"
             tools:layout_editor_absoluteY="504dp" />
