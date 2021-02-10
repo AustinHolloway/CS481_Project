@@ -135,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(@NonNull Location location)
             {
-                currentLocation = new LatLng(location.getLatitude(), location.getLongitude()); //TODO: Set location to database
+                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.clear();
 
                 mMap.addCircle(new CircleOptions()
@@ -159,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //remove spinney wheel
                 progressBar.setVisibility(View.GONE);
 
-                DatabaseReference ref =FirebaseDatabase.getInstance().getReference("GPS_COOR");
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("GPS_COOR");
 
                 //setup geofire (it is to fid w/in given location)
                 GeoFire geoFire = new GeoFire(ref);
