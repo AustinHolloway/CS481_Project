@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.chatapp.findfriends.FindFriendsFragment;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -114,7 +115,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         startActivity(new Intent(MapsActivity.this, ChatActivity.class));
                     }
                     case 2:{}
-                    case 3:{}
+                    case 3:{
+                        tabLayout.clearOnTabSelectedListeners();
+                        startActivity(new Intent(MapsActivity.this, FindFriendsFragment.class));
+                    }
                     case 4:
                     {
                        // startActivity(new Intent(MapsActivity.this, ProfileActivity.class));
