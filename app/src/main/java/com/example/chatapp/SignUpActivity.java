@@ -107,6 +107,10 @@ public class SignUpActivity extends AppCompatActivity
                     passwordXML.setError("Please enter your password");
                     nameXML.setError("Please enter your name");
                 }
+                else if(password.length() < 6){
+                    passwordXML.setError("Password must be 6 characters long.");
+                    passwordXML.requestFocus();
+                }
                 else if(tooYoung(birthday)){
                     birthdayXML.setError("Must be 18 to use this app.");
                 }
