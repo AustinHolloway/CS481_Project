@@ -50,7 +50,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationListener locationListener;
     private LatLng currentLocation;
     private View progressBar;
-    TabLayout tabLayout;
+    Tabs tbs;
+    TabLayout tabs;
     private Boolean moreUsers = true;
 
     private DatabaseReference mRootRef;
@@ -86,40 +87,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabBar);
+       tbs = new Tabs ( findViewById(R.id.tabBarMap), this);
+        tabs = tbs.addTabs(0);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Map"));
-        tabLayout.addTab(tabLayout.newTab().setText("Chat"));
-        tabLayout.addTab(tabLayout.newTab().setText("Alerts"));
-        tabLayout.addTab(tabLayout.newTab().setText("Find"));
-        tabLayout.addTab(tabLayout.newTab().setText("About"));
-
-        //makes map that good purp
-        tabLayout.getTabAt(0).select();
-
-        //TODO:Set up remove it when done
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
-        {
+     //  TODO:Set up remove it when done
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+       {
             @Override
             public void onTabSelected(TabLayout.Tab tab)
             {
-                int tabPos = tabLayout.getSelectedTabPosition();
-
+                int tabPos = tabs.getSelectedTabPosition();
                 switch (tabPos)
                 {
-                    case 0: { break; }
-                    case 1:
-                    {
-                        tabLayout.clearOnTabSelectedListeners();
-                        startActivity(new Intent(MapsActivity.this, ChatActivity.class));
+                    case 0:
+                     {
+                         tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(MapsActivity.this, MapsActivity.class));
+                        break;
                     }
-                    case 2:{break;}
+                    case 1:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(MapsActivity.this, ChatActivity.class));
+                        break;
+                    }
+                    case 2:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(MapsActivity.this, ChatRegionalActivity.class));
+                        break;
+                    }
                     case 3:{break;}
                     case 4:
                     {
-                        tabLayout.clearOnTabSelectedListeners();
-                        startActivity(new Intent(MapsActivity.this, ProfileActivity.class));
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(MapsActivity.this, ProfileActivity.class)) ;
+                        break;
                     }
+
                 }
             }
 
@@ -140,10 +143,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 mMap.addCircle(new CircleOptions()
                                 .center(currentLocation)
-                                .radius(15000)
+                                .radius(48280.3)
                                 .strokeWidth(0f)
                                 .fillColor(0x550000FF));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,10f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,8.6f));
 
                 //dont load in africa
                 try {
@@ -171,7 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 geoFire.setLocation(uId, new GeoLocation(currentLocation.latitude, currentLocation.longitude));
 
                 //qwery database for radius of 51 km?
-                GeoQuery query = geoFire.queryAtLocation(new GeoLocation(currentLocation.latitude, currentLocation.longitude), 51);
+                GeoQuery query = geoFire.queryAtLocation(new GeoLocation(currentLocation.latitude, currentLocation.longitude), 56);
 
                         query.addGeoQueryEventListener(new GeoQueryEventListener() {
 
@@ -181,7 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 //key is userID
                                 LatLng currentInRange = new LatLng(loc.latitude, loc.longitude);
 
-                                mMap.addMarker(new MarkerOptions().position(currentInRange).title("Dis you"));
+                                mMap.addMarker(new MarkerOptions().position(currentInRange));
                             }
 
                             @Override

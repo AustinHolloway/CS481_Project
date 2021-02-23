@@ -51,12 +51,10 @@ private EditText msgText;
 private ListView msgList;
 private FirebaseListAdapter<ChatMessages> fbListAdapter;
 private double [] currLocation = new double [2];
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private LatLng currentLocation;
-    GeoQuery query;
 
-    TabLayout tabLayout;
+   private Tabs tbs;
+   private TabLayout tabs;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -70,56 +68,15 @@ private double [] currLocation = new double [2];
             this.getSupportActionBar().hide();
         }
 
-        tabLayout = (TabLayout) findViewById(R.id.tabBar);
+        tbs = new Tabs ( findViewById(R.id.tabBarGroupChat), this);
+        tabs = tbs.addTabs(1);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Map"));
-        tabLayout.addTab(tabLayout.newTab().setText("Chat"));
-        tabLayout.addTab(tabLayout.newTab().setText("Alerts"));
-        tabLayout.addTab(tabLayout.newTab().setText("Find"));
-        tabLayout.addTab(tabLayout.newTab().setText("About"));
-
-        //makes chat that good purple
-        tabLayout.getTabAt(1).select();
-
-        iconAttach = findViewById(R.id.iconAttachment); //will be for attaching pics
+       // iconAttach = findViewById(R.id.iconAttachment); //will be for attaching pics
         iconSend = findViewById(R.id.iconSend); //send arrow
         msgText = findViewById(R.id.messageInputTxt); //message you want to send
         msgList = findViewById(R.id.listViewMsg); //chat msg list
 
-        ///////////////////////////////////////////////////////////////////////////////////
-
         String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        DatabaseReference refGPS = FirebaseDatabase.getInstance().getReference("GPS_COOR");
-
-        //setup geofire (it is to fid w/in given location)
-        GeoFire geoFire = new GeoFire(refGPS);
-
-        final String[] geoKey = {""};
-
-
-       geoFire.getLocation(uId, new LocationCallback()
-        {
-           @Override
-
-            public void onLocationResult(String key, GeoLocation location)
-            {
-                //all users in a given range
-               if (location != null)
-
-                {
-                    geoKey[0] = key;
-                   currLocation[0] = location.latitude;
-                   currLocation[1] = location.longitude;
-                    System.out.println("LOCATION NOT NULL");
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-
 
         DatabaseReference usrInfo  = FirebaseDatabase.getInstance().getReference("UserInfo");
 
@@ -136,9 +93,7 @@ private double [] currLocation = new double [2];
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
 
 
@@ -149,7 +104,7 @@ private double [] currLocation = new double [2];
             {
 
                 ChatMessages msg = new ChatMessages(msgText.getText().toString(), userInformation[1]
-                        ,userInformation[0], userInformation[2], currLocation, System.currentTimeMillis());
+                        ,userInformation[0], userInformation[2],  System.currentTimeMillis());
 
                 FirebaseDatabase.getInstance()
                         .getReference("Group_Msgs")//.child(userId)
@@ -174,7 +129,6 @@ private double [] currLocation = new double [2];
                 TextView usrName = v.findViewById(R.id.msguserID);
                 TextView msgTime = v.findViewById(R.id.msgTime);
 
-
                 if (model.getUserId().equals(uId))
                 {
                     usrName.setTextColor(Color.BLUE);
@@ -191,26 +145,34 @@ private double [] currLocation = new double [2];
         msgList.setAdapter(fbListAdapter); //sets the messages to the chat
 
         //TODO:Set up remove it when done
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
         {
             @Override
             public void onTabSelected(TabLayout.Tab tab)
             {
-                int tabPos = tabLayout.getSelectedTabPosition();
+                int tabPos = tabs.getSelectedTabPosition();
                 switch (tabPos)
                 {
-                    case 0:
-                     {
-                         tabLayout.clearOnTabSelectedListeners();
+                    case 0: {
+                        tabs.clearOnTabSelectedListeners();
                         startActivity(new Intent(ChatActivity.this, MapsActivity.class));
+                        break;
                     }
-                    case 1:{break;}
-                    case 2:{break;}
+                    case 1:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ChatActivity.this, ChatActivity.class));
+                        break;
+                    }
+                    case 2:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ChatActivity.this, ChatRegionalActivity.class));
+                        break;
+                    }
                     case 3:{break;}
-                    case 4:
-                    {
-                        tabLayout.clearOnTabSelectedListeners();
+                    case 4: {
+                        tabs.clearOnTabSelectedListeners();
                         startActivity(new Intent(ChatActivity.this, ProfileActivity.class));
+                        break;
                     }
                 }
             }
@@ -222,61 +184,6 @@ private double [] currLocation = new double [2];
         });
     }
 }
-/* This is trash buy might be useful
-
-
- //geoFire.setLocation(uId, new GeoLocation(currLocation[0],currLocation[1]));
-
-//////////////////////////////////////////////////////////GET LOCATION AGAIN
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-                locationListener = new LocationListener()
-                {
-@Override
-public void onLocationChanged(@NonNull Location location) {
-        // currentLocation = new LatLng(location.getLatitude(), location.getLongitude()); //TODO: Set location to database
-        currLocation[0] = location.getLatitude();
-        currLocation[1] = location.getLongitude();
-
-        //stop it from regenerating location so location is only found once.
-        locationManager.removeUpdates(this);
-        //       geoFire.setLocation(uId, new GeoLocation(currLocation[0],currLocation[1]));
-        //       query = geoFire.queryAtLocation(new GeoLocation(currLocation[0],currLocation[1]), 51);
-        }};
-
-/*
-
-          //save user id's of thoes within range
-          ArrayList<String> userIDs = new ArrayList<>();
-        GeoQuery query = geoFire.queryAtLocation(new GeoLocation(currLocation[0],currLocation[1]), 51);
-        System.out.println("GEO KEYyyyyyyyyyyyy");
-           query.addGeoQueryEventListener(new GeoQueryEventListener() {
-
-                @Override
-               public void onKeyEntered(String key, GeoLocation loc) //key is userID
-                {
-
-                    System.out.println(key+"GEO KEYyyyyyyyyyyyy22222222222");
-                    userIDs.add(key);
-
-                }
-
-               @Override
-              public void onKeyExited(String key) {}
-
-                @Override
-                public void onKeyMoved(String key, GeoLocation location) {}
-
-                @Override
-             public void onGeoQueryReady() {}
-
-               @Override
-               public void onGeoQueryError(DatabaseError error) {
-                   System.out.println("DATA BASE ERROR   " + error.getMessage());
-               }
-           });
-
-
-*/
 
 
 

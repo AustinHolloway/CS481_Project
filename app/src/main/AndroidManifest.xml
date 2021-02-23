@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
-        <activity android:name=".ChangePasswordActivity"></activity>
+        <activity android:name=".ChatRegionalActivity"></activity>
+        <activity android:name=".ChangePasswordActivity" />
         <activity android:name=".ProfileActivity" />
         <!--
          remove ugly bar??

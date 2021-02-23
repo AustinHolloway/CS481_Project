@@ -22,6 +22,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private EditText emailXML, nameXML;
     private FirebaseAuth mFirebaseAuth;
+    Tabs tbs;
+    TabLayout tabs;
    // private ImageView ivProfile;
 
     //private StorageReference fileStorage;
@@ -50,47 +52,48 @@ public class ProfileActivity extends AppCompatActivity {
             this.getSupportActionBar().hide();
         }
 
-        tabLayout = (TabLayout) findViewById(R.id.tabBar);
-
-        tabLayout.addTab(tabLayout.newTab().setText("Map"));
-        tabLayout.addTab(tabLayout.newTab().setText("Chat"));
-        tabLayout.addTab(tabLayout.newTab().setText("Alerts"));
-        tabLayout.addTab(tabLayout.newTab().setText("Find"));
-        tabLayout.addTab(tabLayout.newTab().setText("About"));
-
-        //makes about that good purple
-        tabLayout.getTabAt(4).select();
+        tbs = new Tabs ( findViewById(R.id.tabBarProfile), this);
+        tabs = tbs.addTabs(4);
 
         //TODO:Set up remove it when done
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+     tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
         {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int tabPos = tabLayout.getSelectedTabPosition();
-               // tabLayout.clearOnTabSelectedListeners();
-                switch (tabPos) {
+            public void onTabSelected(TabLayout.Tab tab)
+            {
+                int tabPos = tabs.getSelectedTabPosition();
+                switch (tabPos)
+                {
                     case 0: {
-                        tabLayout.clearOnTabSelectedListeners();
+                        tabs.clearOnTabSelectedListeners();
                         startActivity(new Intent(ProfileActivity.this, MapsActivity.class));
+                        break;
                     }
-                    case 1: {
-                        tabLayout.clearOnTabSelectedListeners();
+                    case 1:{
+                        tabs.clearOnTabSelectedListeners();
                         startActivity(new Intent(ProfileActivity.this, ChatActivity.class));
+                        break;
                     }
-                    case 2: {break;}
-                    case 3: {break;}
+                    case 2:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ProfileActivity.this, ChatRegionalActivity.class));
+                        break;
+                    }
+                    case 3:{break;}
                     case 4: {
-                        tabLayout.clearOnTabSelectedListeners();
+                        tabs.clearOnTabSelectedListeners();
                         startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));
+                        break;
                     }
-
                 }
             }
+
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {}
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+
         /**
          * uncommenting will fuck it all up, profile tab works when all commented out
          * Im leaving it here for now, ill figure it out later but it works

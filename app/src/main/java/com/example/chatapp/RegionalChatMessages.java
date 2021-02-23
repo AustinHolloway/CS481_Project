@@ -1,10 +1,7 @@
 package com.example.chatapp;
 
-import com.firebase.geofire.GeoLocation;
+public class RegionalChatMessages {
 
-import java.util.Date;
-
-public class ChatMessages {
     private String messageText;
     private String messageUser;
     private String userName;
@@ -13,18 +10,20 @@ public class ChatMessages {
     private double usrLocationLong;
     private long msgTime;
 
-    public ChatMessages(String messageText, String messageUser, String userName, String userIDD,  long time ) {
+    public RegionalChatMessages(String messageText, String messageUser, String userName, String userIDD, double[] currLocation, long time) {
         this.messageText = messageText;
         this.messageUser = messageUser;
         this.userName = userName;
+        this.usrLocationLat = currLocation[0]; //latitude
+        this.usrLocationLong = currLocation[1]; //longitude
         this.userId = userIDD;
 
         // Initialize to current time
-       this.msgTime = time;
+        this.msgTime = time;//new Date().getTime();
+
     }
 
-    public ChatMessages(){
-
+    public RegionalChatMessages() {
     }
 
     public String getMessageText() {
@@ -50,17 +49,22 @@ public class ChatMessages {
     public void setMsgTime(long messageTime) {
         this.msgTime = messageTime;
     }
-    public String getUserName(){
-        return userName;
-    }
-    public void setUserName(String uname){
-        this.userName=uname;
-    }
-    public void setUserId(String userID){
-        this.userId = userID;
-    }
-    public String getUserId(){
-        return userId;
-    }
 
+    public String getUserName() { return userName; }
+
+    public void setUserName(String uname) { this.userName = uname; }
+
+    public void setUserId(String userID) { this.userId = userID; }
+
+    public String getUserId() { return userId; }
+
+    public double getUsrLocationLat() { return usrLocationLat; }
+
+    public void setUsrLocationLat(double lat) { this.usrLocationLat = lat; }
+
+    public double getUsrLocationLong() { return usrLocationLong; }
+
+    public void setUsrLocationLong(double lng) { this.usrLocationLong = lng; }
 }
+
+

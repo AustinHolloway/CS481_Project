@@ -15,7 +15,7 @@
     <string name="failed_to_fetch_friends">Failed to fetch friends : %l$s</string>
     <string name="empty_requests_list">Friend requests will appear here</string>
     <string name="empty_friends_list">Freinds list will appear here</string>
-=======
+    =======
     <string name="change_password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="save_password">Confirm Password</string>
