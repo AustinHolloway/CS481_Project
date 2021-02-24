@@ -28,5 +28,14 @@
     <string name="failed_to_send_request">Failed to send request : %1$s</string>
     <string name="request_cancelled_successfully">Request Cancelled Successfully</string>
     <string name="failed_to_cancel_request">Failed to cancel request : %1$s</string>
+    <string name="failed_to_update_profile">Failed to updateProfile : %1$s</string>
+    <string name="permission_required">Access permission is required</string>
+    <string name="save_Profile">Save</string>
+    <string name="change_picture">Change Picture</string>
+    <string name="remove_picture">Remove Picture</string>
+    <string name="photo_removed_successfully">Photo remove successfully</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="Failed_to_update_profile">Failed to update profile</string>
+    <string name="failed_to_update_profle">Failed to update profile : %1$s</string>
     >>>>>>> Stashed changes
 </resources>

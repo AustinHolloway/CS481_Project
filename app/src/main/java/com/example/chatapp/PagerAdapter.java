@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.chatapp.chat.MessagesFragment;
 import com.example.chatapp.findfriends.FindFriendsFragment;
 
 public class PagerAdapter extends FragmentPagerAdapter {

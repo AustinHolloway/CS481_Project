@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.chat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +12,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.chatapp.MapsActivity;
+import com.example.chatapp.ProfileActivity;
+import com.example.chatapp.R;
+import com.example.chatapp.Tabs;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,7 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Date;
 
 import static com.google.firebase.auth.FirebaseAuth.getInstance;
-import static java.lang.Math.ceil;
 
 public class ChatRegionalActivity extends AppCompatActivity {
     private Tabs tbs;

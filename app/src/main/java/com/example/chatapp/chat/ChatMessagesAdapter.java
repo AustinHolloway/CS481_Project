@@ -1,13 +1,13 @@
-package com.example.chatapp;
+package com.example.chatapp.chat;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+
+import com.example.chatapp.chat.ChatMessages;
 
 public class ChatMessagesAdapter extends ArrayAdapter<ChatMessages> {
 

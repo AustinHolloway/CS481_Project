@@ -30,7 +30,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
-public class SignUpActivity extends AppCompatActivity
+public class    SignUpActivity extends AppCompatActivity
 {
 
     //Class fields
@@ -174,6 +174,7 @@ public class SignUpActivity extends AppCompatActivity
                                     {
                                         if(task.isSuccessful())
                                         {
+
                                             Toast.makeText(SignUpActivity.this,
                                                     "Registration was Successful. ",
                                                     Toast.LENGTH_SHORT).show();

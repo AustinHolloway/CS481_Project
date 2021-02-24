@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
+    android:onClick="btnChangePassword"
     tools:context=".ProfileActivity">
 
     <com.google.android.material.tabs.TabLayout
@@ -26,12 +27,13 @@
             android:layout_width="146dp"
             android:layout_height="153dp"
             android:contentDescription="TODO"
+            android:onClick="changeImage"
             app:srcCompat="@drawable/default_picture"
             tools:layout_editor_absoluteX="133dp"
             tools:layout_editor_absoluteY="32dp" />
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/theirName"
+            android:id="@+id/nameXML"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -42,6 +44,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/user_email" />
+
+        <Button
+            android:id="@+id/save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="64dp"
+            android:layout_marginRight="64dp"
+            android:onClick="btnSaveClick"
+            android:text="@string/save_Profile" />
 
         <Button
             android:id="@+id/btnResestPassword"
