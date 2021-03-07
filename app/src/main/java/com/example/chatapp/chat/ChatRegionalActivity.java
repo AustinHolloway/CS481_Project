@@ -17,6 +17,7 @@ import com.example.chatapp.ProfileActivity;
 import com.example.chatapp.R;
 import com.example.chatapp.Tabs;
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseListOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,9 +39,12 @@ public class ChatRegionalActivity extends AppCompatActivity {
     private int lng, lat;
     private String userId;
     private String combined;
+    private FirebaseListAdapter<RegionalChatMessages> adapter;
+    private FirebaseListOptions<RegionalChatMessages> options;
     
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_regional);
 
@@ -93,9 +97,16 @@ public class ChatRegionalActivity extends AppCompatActivity {
                 String lg = Integer.toString(lng);
                 combined = la+lg;
 
+                options = new FirebaseListOptions.Builder<RegionalChatMessages>().setQuery(FirebaseDatabase.getInstance()
+                        .getReference("Regional_Chat").child(combined), RegionalChatMessages.class)
+                        .setLayout(R.layout.fragment_chat_message)
+                        .build();
+
                 addfbListAdapter();
-                if (fbListAdapter != null)
-                    msgList.setAdapter(fbListAdapter); //sets the messages to the chat
+                adapter.startListening();
+
+                if (adapter != null)
+                    msgList.setAdapter(adapter); //sets the messages to the chat
             }
 
             @Override
@@ -141,7 +152,6 @@ public class ChatRegionalActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
-
     }
 
     public void setIconListener(String[] userInformation, double [] latLong){
@@ -166,30 +176,33 @@ public class ChatRegionalActivity extends AppCompatActivity {
         });
     }
 
-    public void addfbListAdapter(){
-        fbListAdapter = new FirebaseListAdapter<RegionalChatMessages>(ChatRegionalActivity.this,
-                RegionalChatMessages.class, R.layout.fragment_chat_message, FirebaseDatabase.getInstance()
-                .getReference("Regional_Chat").child(combined))
-        {
+public void addfbListAdapter() {
 
-            @Override
-            protected void populateView(View v, RegionalChatMessages model, int position)
-            {
+    adapter = new FirebaseListAdapter<RegionalChatMessages>(options) {
 
-                TextView msgTxt = v.findViewById(R.id.msgText);
-                TextView usrName = v.findViewById(R.id.msguserID);
-                TextView msgTime = v.findViewById(R.id.msgTime);
+        @Override
+        protected void populateView(@NonNull View v, @NonNull RegionalChatMessages model, int position) {
 
-                if (model.getUserId().equals(userId))
-                {
-                    usrName.setTextColor(Color.BLUE);
-                }
+            TextView msgTxt = v.findViewById(R.id.msgText);
+            TextView usrName = v.findViewById(R.id.msguserID);
+            TextView msgTime = v.findViewById(R.id.msgTime);
 
-                Date date = new Date( model.getMsgTime());
-                msgTxt.setText(model.getMessageText());
-                usrName.setText(model.getUserName());
-                msgTime.setText(date.toString());
+            if (model.getUserId().equals(userId)) {
+                usrName.setTextColor(Color.BLUE);
             }
-        };
+
+            Date date = new Date(model.getMsgTime());
+            msgTxt.setText(model.getMessageText());
+            usrName.setText(model.getUserName());
+            msgTime.setText(date.toString());
+        }
+
+    };
+
+}
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }

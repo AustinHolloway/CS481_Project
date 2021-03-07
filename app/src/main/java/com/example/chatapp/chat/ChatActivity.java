@@ -17,6 +17,7 @@ import com.example.chatapp.ProfileActivity;
 import com.example.chatapp.R;
 import com.example.chatapp.Tabs;
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseListOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,14 +32,15 @@ import static com.google.firebase.auth.FirebaseAuth.*;
 
 public class ChatActivity extends AppCompatActivity// implements View.OnClickListener
 {
-private ImageView iconAttach, iconSend;
+private ImageView iconSend;
 private EditText msgText;
 private ListView msgList;
-private FirebaseListAdapter<ChatMessages> fbListAdapter;
+
 private double [] currLocation = new double [2];
 
    private Tabs tbs;
    private TabLayout tabs;
+  private  FirebaseListAdapter<ChatMessages> adapter;
 
 
     @Override
@@ -60,6 +62,8 @@ private double [] currLocation = new double [2];
         iconSend = findViewById(R.id.iconSend); //send arrow
         msgText = findViewById(R.id.messageInputTxt); //message you want to send
         msgList = findViewById(R.id.listViewMsg); //chat msg list
+
+
 
         String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -101,33 +105,35 @@ private double [] currLocation = new double [2];
             }
         });
 
-        fbListAdapter = new FirebaseListAdapter<ChatMessages>(ChatActivity.this,
-                ChatMessages.class, R.layout.fragment_chat_message, FirebaseDatabase.getInstance()
-               .getReference("Group_Msgs"))
+        FirebaseListOptions<ChatMessages> options =new FirebaseListOptions.Builder<ChatMessages>().setQuery(FirebaseDatabase.getInstance()
+                           .getReference("Group_Msgs"), ChatMessages.class)
+                            .setLayout(R.layout.fragment_chat_message)
+                            .build();
+         adapter = new FirebaseListAdapter<ChatMessages>(options) {
+
+        @Override
+        protected void populateView(@NonNull View v, @NonNull ChatMessages model, int position)
         {
 
-            @Override
-            protected void populateView(View v, ChatMessages model, int position)
+            TextView msgTxt = v.findViewById(R.id.msgText);
+            TextView usrName = v.findViewById(R.id.msguserID);
+            TextView msgTime = v.findViewById(R.id.msgTime);
+
+            if (model.getUserId().equals(uId))
             {
-
-                TextView msgTxt = v.findViewById(R.id.msgText);
-                TextView usrName = v.findViewById(R.id.msguserID);
-                TextView msgTime = v.findViewById(R.id.msgTime);
-
-                if (model.getUserId().equals(uId))
-                {
-                    usrName.setTextColor(Color.BLUE);
-                }
-
-               Date date = new Date( model.getMsgTime());
-                msgTxt.setText(model.getMessageText());
-                usrName.setText(model.getUserName());
-                msgTime.setText(date.toString());
+                usrName.setTextColor(Color.BLUE);
             }
-        };
 
-        if (fbListAdapter != null)
-        msgList.setAdapter(fbListAdapter); //sets the messages to the chat
+            Date date = new Date( model.getMsgTime());
+            msgTxt.setText(model.getMessageText());
+            usrName.setText(model.getUserName());
+            msgTime.setText(date.toString());
+        }
+
+};
+
+        if (adapter != null)
+         msgList.setAdapter(adapter); //sets the messages to the chat
 
         //TODO:Set up remove it when done
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
@@ -167,6 +173,16 @@ private double [] currLocation = new double [2];
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }
 
