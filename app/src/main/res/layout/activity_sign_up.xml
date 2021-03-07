@@ -93,8 +93,9 @@
             android:layout_height="wrap_content"
             android:onClick="openDatePicker"
             android:text="Birthday"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textColor="?android:textColorHint"
+            />
 
 
         <Space
