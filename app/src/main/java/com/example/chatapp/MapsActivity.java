@@ -3,12 +3,19 @@ package com.example.chatapp;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,14 +33,22 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.concurrent.TimeUnit;
 
@@ -178,8 +193,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 //key is userID
                                 LatLng currentInRange = new LatLng(loc.latitude, loc.longitude);
+/////////////////////////////////////////////////////////////////////////////////////////////////
+                                //ref to the storage bucket
+                                FirebaseStorage storage = FirebaseStorage.getInstance();
 
-                                mMap.addMarker(new MarkerOptions().position(currentInRange));
+                                StorageReference picsChild = storage.getReference().child(key+".jpg");
+
+                                //String name = getUserName(key);
+
+
+
+                                picsChild.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>()
+                                {
+                                    @Override
+                                    public void onSuccess(byte[] bytes)
+                                    {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        //ivProfile.setImageBitmap(bitmap);
+                                       // doesHavePic = true;
+                                       // BitmapFromUserPic(bitmap);
+                                        getUserNameAndSetNameAndMarker(key,bitmap, currentInRange);
+//System.out.println(getUserName(key)+"                    NAME");
+//waddMarkers(bitmap, getUserName(key), currentInRange);
+//                                        mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).title(name).anchor(0,0));
+                                    }
+                                }).addOnFailureListener(new OnFailureListener()
+                                {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e)
+                                    {
+                                        Drawable draw = getResources().getDrawable(R.drawable.default_picture);
+                                        Bitmap bitmap = ((BitmapDrawable) draw).getBitmap();
+                                      //  ivProfile.setImageResource(R.drawable.default_picture);
+                                      //  doesHavePic = false;
+                                        getUserNameAndSetNameAndMarker(key, bitmap, currentInRange);
+                                       // mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapNoPic()).anchor(0,0));
+                                    }
+                                });
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
                             }
 
                             @Override
@@ -231,4 +284,84 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO: Retrive previous location of user from database, for initial pan.
         mMap = googleMap;
     }
+
+    private BitmapDescriptor BitmapFromUserPic(Bitmap bitmap) {
+        // below line is use to generate a drawable.
+       // Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+
+        drawable.setBounds(0, 0, 100,100 );
+        drawable.setCircular(true);
+
+        Bitmap bitmap2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap2);
+
+        drawable.draw(canvas);
+
+        return BitmapDescriptorFactory.fromBitmap(bitmap2);
+    }
+
+    private BitmapDescriptor BitmapNoPic(Bitmap bitmap) {
+        // below line is use to generate a drawable.
+        // Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+//        Drawable draw = getResources().getDrawable(R.drawable.default_picture);
+//        Bitmap bitmap = ((BitmapDrawable) draw).getBitmap();
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+
+        drawable.setBounds(0, 0, 100, 100);
+        drawable.setCircular(true);
+
+        Bitmap bitmap2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap2);
+
+        drawable.draw(canvas);
+
+        return BitmapDescriptorFactory.fromBitmap(bitmap2);
+    }
+
+    //TODO////////////////User name is not returning
+
+    private String getUserNameAndSetNameAndMarker(String key,Bitmap bitmap,  LatLng currentInRange){
+        DatabaseReference refName = FirebaseDatabase.getInstance().getReference("UserInfo");
+//String str = refName.child(key).child("name").value().toString();
+//System.out.println(str + "STR         RRRRRRRRRRRRRRRRRRRRRRRRR");
+                                        final String[] name = new String[1];
+                               refName.addListenerForSingleValueEvent(new ValueEventListener()
+                                {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                                   {
+
+                                     //  for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                                           System.out.println(key + "                       KEYYYYYYYYYYYYYYYYYYYYYYY");
+                                           if (snapshot.child(key).child("name").getValue() != null) {
+                                               name[0] = snapshot.child(key).child("name").getValue().toString();
+
+                                               System.out.println("NAME SET");
+
+
+
+                                           }
+                                       if (name[0] != null)
+                                       mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).title(name[0]).anchor(0,0));
+        else mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapNoPic(bitmap)).anchor(0,0));
+                                     //  }
+                                   }
+
+                                  @Override
+                                   public void onCancelled(@NonNull DatabaseError error) {}
+                             });
+
+
+        return  name[0];
+    }
+//    private void addMarkers(Bitmap bitmap,  String nameInput, LatLng currentInRange){
+//         System.out.println("NOT NULL NAMEEEEEEEEEEEEEEEEEE"+ nameInput);
+//        if (nameInput != null)
+//        mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).title(nameInput).anchor(0,0));
+//        else mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).anchor(0,0));
+//    }
+
 }
