@@ -92,7 +92,11 @@ public class ProfileActivity extends AppCompatActivity {
                         startActivity(new Intent(ProfileActivity.this, ChatRegionalActivity.class));
                         break;
                     }
-                    case 3:{break;}
+                    case 3:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ProfileActivity.this, FindFriendsActivity.class));
+                        break;
+                    }
                     case 4: {
                         tabs.clearOnTabSelectedListeners();
                         startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));

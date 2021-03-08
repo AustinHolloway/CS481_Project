@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.chatapp.FindFriendsActivity;
 import com.example.chatapp.MapsActivity;
 import com.example.chatapp.ProfileActivity;
 import com.example.chatapp.R;
@@ -159,7 +160,11 @@ private double [] currLocation = new double [2];
                         startActivity(new Intent(ChatActivity.this, ChatRegionalActivity.class));
                         break;
                     }
-                    case 3:{break;}
+                    case 3:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(ChatActivity.this, FindFriendsActivity.class));
+                        break;
+                    }
                     case 4: {
                         tabs.clearOnTabSelectedListeners();
                         startActivity(new Intent(ChatActivity.this, ProfileActivity.class));

@@ -125,7 +125,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         startActivity(new Intent(MapsActivity.this, ChatRegionalActivity.class));
                         break;
                     }
-                    case 3:{break;}
+                    case 3:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(MapsActivity.this, FindFriendsActivity.class));
+                        break;
+                    }
                     case 4:
                     {
                         tabs.clearOnTabSelectedListeners();
