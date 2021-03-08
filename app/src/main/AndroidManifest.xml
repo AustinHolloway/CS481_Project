@@ -8,7 +8,7 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!--lets you look at picture on phone -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +17,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
-        <activity android:name=".chat.ChatRegionalActivity"></activity>
+        <activity android:name=".ContactsActivity"></activity>
+        <activity android:name=".PeerActivity" />
+        <activity android:name=".FindFriendsActivity" />
+        <activity android:name=".chat.ChatRegionalActivity" />
         <activity android:name=".ChangePasswordActivity" />
         <activity android:name=".ProfileActivity" />
         <!--

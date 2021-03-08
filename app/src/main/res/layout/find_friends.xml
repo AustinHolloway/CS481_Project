@@ -8,6 +8,7 @@
 
 
 
+
     <LinearLayout
         android:id="@+id/llFindFriends"
         android:layout_width="match_parent"
