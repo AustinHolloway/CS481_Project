@@ -307,7 +307,7 @@ public class ProfileActivity extends AppCompatActivity {
                     if(task.isSuccessful())
                     {
                         Toast.makeText(ProfileActivity.this,
-                                R.string.password_change_successfully,
+                                R.string.profile_updated_secussfully,
                                 Toast.LENGTH_SHORT).show();
 
                     }

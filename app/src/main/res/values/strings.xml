@@ -37,5 +37,6 @@
     <string name="enter_name">Enter Name</string>
     <string name="Failed_to_update_profile">Failed to update profile</string>
     <string name="failed_to_update_profle">Failed to update profile : %1$s</string>
+    <string name="profile_updated_secussfully">Profile Updated Sucessfuly</string>
     >>>>>>> Stashed changes
 </resources>
