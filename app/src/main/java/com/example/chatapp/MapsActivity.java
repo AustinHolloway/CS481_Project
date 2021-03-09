@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,21 +53,18 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.concurrent.TimeUnit;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener
 {
-
     private GoogleMap mMap;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng currentLocation;
     private View progressBar;
-    Tabs tbs;
-    TabLayout tabs;
+    private Tabs tbs;
+    private TabLayout tabs;
     private Boolean moreUsers = true;
+    private String uId;
 
-    private DatabaseReference mRootRef;
-    private FirebaseAuth firebaseAuth;
-    private String currUsrId;
 @Override
     //called automatically once permissions were accepted or declined
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
@@ -182,7 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 GeoFire geoFire = new GeoFire(ref);
 
                 //get userId
-                String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                 //set location
                 geoFire.setLocation(uId, new GeoLocation(currentLocation.latitude, currentLocation.longitude));
@@ -197,15 +195,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 //key is userID
                                 LatLng currentInRange = new LatLng(loc.latitude, loc.longitude);
-/////////////////////////////////////////////////////////////////////////////////////////////////
+
                                 //ref to the storage bucket
                                 FirebaseStorage storage = FirebaseStorage.getInstance();
 
                                 StorageReference picsChild = storage.getReference().child(key+".jpg");
-
-                                //String name = getUserName(key);
-
-
 
                                 picsChild.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>()
                                 {
@@ -213,13 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     public void onSuccess(byte[] bytes)
                                     {
                                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                        //ivProfile.setImageBitmap(bitmap);
-                                       // doesHavePic = true;
-                                       // BitmapFromUserPic(bitmap);
                                         getUserNameAndSetNameAndMarker(key,bitmap, currentInRange);
-//System.out.println(getUserName(key)+"                    NAME");
-//waddMarkers(bitmap, getUserName(key), currentInRange);
-//                                        mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).title(name).anchor(0,0));
                                     }
                                 }).addOnFailureListener(new OnFailureListener()
                                 {
@@ -228,15 +216,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     {
                                         Drawable draw = getResources().getDrawable(R.drawable.default_picture);
                                         Bitmap bitmap = ((BitmapDrawable) draw).getBitmap();
-                                      //  ivProfile.setImageResource(R.drawable.default_picture);
-                                      //  doesHavePic = false;
                                         getUserNameAndSetNameAndMarker(key, bitmap, currentInRange);
-                                       // mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapNoPic()).anchor(0,0));
                                     }
                                 });
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
                             }
 
                             @Override
@@ -287,11 +269,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         //TODO: Retrive previous location of user from database, for initial pan.
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
+    }
+
+    //calls user profile of other user
+    @Override
+    public boolean onMarkerClick(Marker marker){
+
+        if ( uId.equals((String) marker.getTag())) {
+            Intent peerIntent = new Intent(MapsActivity.this, ProfileActivity.class);
+            peerIntent.putExtra("visit_user_id", (String) marker.getTag());
+            startActivity(peerIntent);
+        }else {
+            Intent peerIntent = new Intent(MapsActivity.this, PeerActivity.class);
+            peerIntent.putExtra("visit_user_id", (String) marker.getTag());
+            startActivity(peerIntent);
+        }
+
+        return false;
     }
 
     private BitmapDescriptor BitmapFromUserPic(Bitmap bitmap) {
-        // below line is use to generate a drawable.
-       // Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+
         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
 
         drawable.setBounds(0, 0, 100,100 );
@@ -306,66 +305,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return BitmapDescriptorFactory.fromBitmap(bitmap2);
     }
 
-    private BitmapDescriptor BitmapNoPic(Bitmap bitmap) {
-        // below line is use to generate a drawable.
-        // Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-//        Drawable draw = getResources().getDrawable(R.drawable.default_picture);
-//        Bitmap bitmap = ((BitmapDrawable) draw).getBitmap();
-        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-
-        drawable.setBounds(0, 0, 100, 100);
-        drawable.setCircular(true);
-
-        Bitmap bitmap2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(bitmap2);
-
-        drawable.draw(canvas);
-
-        return BitmapDescriptorFactory.fromBitmap(bitmap2);
-    }
-
-    //TODO////////////////User name is not returning
-
     private String getUserNameAndSetNameAndMarker(String key,Bitmap bitmap,  LatLng currentInRange){
         DatabaseReference refName = FirebaseDatabase.getInstance().getReference("UserInfo");
-//String str = refName.child(key).child("name").value().toString();
-//System.out.println(str + "STR         RRRRRRRRRRRRRRRRRRRRRRRRR");
-                                        final String[] name = new String[1];
-                               refName.addListenerForSingleValueEvent(new ValueEventListener()
-                                {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot)
-                                   {
 
-                                     //  for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                                           System.out.println(key + "                       KEYYYYYYYYYYYYYYYYYYYYYYY");
-                                           if (snapshot.child(key).child("name").getValue() != null) {
-                                               name[0] = snapshot.child(key).child("name").getValue().toString();
+        final String[] name = new String[1];
+        refName.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                if (snapshot.child(key).child("name").getValue() != null)
+                {
+                    name[0] = snapshot.child(key).child("name").getValue().toString();
+                }
+                MarkerOptions mar = new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).anchor(0,0);
+                mMap.addMarker(mar).setTag(key);
+            }
 
-                                               System.out.println("NAME SET");
-
-
-
-                                           }
-                                       if (name[0] != null)
-                                       mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).title(name[0]).anchor(0,0));
-        else mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapNoPic(bitmap)).anchor(0,0));
-                                     //  }
-                                   }
-
-                                  @Override
-                                   public void onCancelled(@NonNull DatabaseError error) {}
-                             });
-
-
-        return  name[0];
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    return  name[0];
     }
-//    private void addMarkers(Bitmap bitmap,  String nameInput, LatLng currentInRange){
-//         System.out.println("NOT NULL NAMEEEEEEEEEEEEEEEEEE"+ nameInput);
-//        if (nameInput != null)
-//        mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).title(nameInput).anchor(0,0));
-//        else mMap.addMarker(new MarkerOptions().position(currentInRange).icon(BitmapFromUserPic(bitmap)).anchor(0,0));
-//    }
-
 }
