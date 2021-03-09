@@ -6,6 +6,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +20,13 @@ import com.example.chatapp.chat.ChatActivity;
 import com.example.chatapp.chat.ChatRegionalActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 public class FindFriendsActivity extends AppCompatActivity {
@@ -153,8 +161,33 @@ public class FindFriendsActivity extends AppCompatActivity {
                   protected void onBindViewHolder(@NonNull FindFriendViewHolder holder, int position, @NonNull UserInfo model) {
                       holder.userName.setText(model.getUsername());
                       holder.userStatus.setText(model.getName());
-                      // image uploader
+                      // image up
+   // ///////////////////////////
+                      //ref to the storage bucket
+                      FirebaseStorage storage = FirebaseStorage.getInstance();
 
+                      StorageReference picsChild = storage.getReference().child((String) getRef(position).getKey()+".jpg");
+
+                      picsChild.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>()
+                      {
+                          @Override
+                          public void onSuccess(byte[] bytes)
+                          {
+                              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                             // getUserNameAndSetNameAndMarker(key,bitmap, currentInRange);
+                              holder.profileImage.setImageBitmap(bitmap);
+                          }
+                      }).addOnFailureListener(new OnFailureListener()
+                      {
+                          @Override
+                          public void onFailure(@NonNull Exception e)
+                          {
+                              Drawable draw = getResources().getDrawable(R.drawable.default_picture);
+                              Bitmap bitmap = ((BitmapDrawable) draw).getBitmap();
+                              holder.profileImage.setImageBitmap(bitmap);
+                                                        }
+                      });
+////////////////////////////////////////
                       holder.itemView.setOnClickListener(new View.OnClickListener() {
                           @Override
                           public void onClick(View v) {
