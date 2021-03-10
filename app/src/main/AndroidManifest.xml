@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
-        <activity android:name=".ContactsActivity"></activity>
+        <activity android:name=".RequestsActivity"></activity>
+        <activity android:name=".ContactsActivity" />
         <activity android:name=".PeerActivity" />
         <activity android:name=".FindFriendsActivity" />
         <activity android:name=".chat.ChatRegionalActivity" />

@@ -63,7 +63,7 @@ public class FindFriendsActivity extends AppCompatActivity {
         tabs = tbsa.addTabs(0);
 
 
-//        //  TODO:Set up remove it when done
+//        
 //        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
 //        {
 //            @Override
@@ -109,7 +109,7 @@ public class FindFriendsActivity extends AppCompatActivity {
 //            public void onTabReselected(TabLayout.Tab tab) {}
 //        });
 //    }
-        //  TODO:Set up remove it when done
+
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
         {
             @Override
@@ -131,7 +131,12 @@ public class FindFriendsActivity extends AppCompatActivity {
                     }
                     case 2:{
                         tabs.clearOnTabSelectedListeners();
-                        startActivity(new Intent(FindFriendsActivity.this, ChatRegionalActivity.class));
+                        startActivity(new Intent(FindFriendsActivity.this, RequestsActivity.class));
+                        break;
+                    }
+                    case 3: {
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(FindFriendsActivity.this, ProfileActivity.class));
                         break;
                     }
 

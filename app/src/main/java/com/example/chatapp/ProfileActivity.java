@@ -69,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         tabs = tbs.addTabs(4);
 
         //TODO:Set up remove it when done
-     tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
         {
             @Override
             public void onTabSelected(TabLayout.Tab tab)
@@ -144,27 +144,27 @@ public class ProfileActivity extends AppCompatActivity {
         //ref to the storage bucket
         storage = FirebaseStorage.getInstance();
 
-            StorageReference picsChild = storage.getReference().child(picID);
+        StorageReference picsChild = storage.getReference().child(picID);
 
-            picsChild.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>()
+        picsChild.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>()
+        {
+            @Override
+            public void onSuccess(byte[] bytes)
             {
-                @Override
-                public void onSuccess(byte[] bytes)
-                {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 ivProfile.setImageBitmap(bitmap);
                 doesHavePic = true;
-                }
-            }).addOnFailureListener(new OnFailureListener()
+            }
+        }).addOnFailureListener(new OnFailureListener()
+        {
+            @Override
+            public void onFailure(@NonNull Exception e)
             {
-                @Override
-                public void onFailure(@NonNull Exception e)
-                {
-                    ivProfile.setImageResource(R.drawable.default_picture);
-                    doesHavePic = false;
-                }
-            });
-   }//on create end
+                ivProfile.setImageResource(R.drawable.default_picture);
+                doesHavePic = false;
+            }
+        });
+    }//on create end
 
     //set to onclick in XML
     public void btnChangePassword(View view)
@@ -261,19 +261,19 @@ public class ProfileActivity extends AppCompatActivity {
     {
         if (data != null)
         {
-        super.onActivityResult(requestCode, resultCode, data);
+            super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 101)
-        {
-            Uri localFileUri = data.getData();
+            if(requestCode == 101)
+            {
+                Uri localFileUri = data.getData();
 
-            ivProfile.setImageURI(localFileUri);
+                ivProfile.setImageURI(localFileUri);
 
-            StorageReference uidPlace = storage.getReference().child(picID);
-            uploadTask = uidPlace.putFile(localFileUri);
-            doesHavePic = true;
-        }
-    }}
+                StorageReference uidPlace = storage.getReference().child(picID);
+                uploadTask = uidPlace.putFile(localFileUri);
+                doesHavePic = true;
+            }
+        }}
 
     //pop up requesting permission from the user
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -299,24 +299,24 @@ public class ProfileActivity extends AppCompatActivity {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
-            firebaseUser.updateEmail (email).addOnCompleteListener(new OnCompleteListener<Void>()
+        firebaseUser.updateEmail (email).addOnCompleteListener(new OnCompleteListener<Void>()
+        {
+            @Override
+            public void onComplete(@NonNull Task<Void> task)
             {
-                @Override
-                public void onComplete(@NonNull Task<Void> task)
+                if(task.isSuccessful())
                 {
-                    if(task.isSuccessful())
-                    {
-                        Toast.makeText(ProfileActivity.this,
-                                R.string.password_change_successfully,
-                                Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this,
+                            R.string.password_change_successfully,
+                            Toast.LENGTH_SHORT).show();
 
-                    }
-                    else
-                    {
-                        Toast.makeText(ProfileActivity.this, getString(R.string.something_went_wrong, task.getException()), Toast.LENGTH_SHORT).show();
-                    }
                 }
-            });
+                else
+                {
+                    Toast.makeText(ProfileActivity.this, getString(R.string.something_went_wrong, task.getException()), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         //set users new name
         refName.child(usrID).child("name").setValue(name);
     }

@@ -23,6 +23,7 @@ public class PeersTab
         tabLayout.addTab(tabLayout.newTab().setText("Find Peers"));
         tabLayout.addTab(tabLayout.newTab().setText("Contacts"));
         tabLayout.addTab(tabLayout.newTab().setText("Requests"));
+        tabLayout.addTab(tabLayout.newTab().setText("Profile"));
 
         //makes chat that good purple
         tabLayout.getTabAt(index).select();

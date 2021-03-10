@@ -3,19 +3,29 @@ package com.example.chatapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 public class PeerActivity extends AppCompatActivity {
@@ -29,11 +39,64 @@ public class PeerActivity extends AppCompatActivity {
     private DatabaseReference peerRef, chatRequestRef, contactsRef;
     private FirebaseAuth mAuth;
 
+    TabLayout tabs;
+    TabLayout tabLayout;
+    PeersTab tbsa;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_peer);
+
+        //Remove the title bar
+        if(this.getSupportActionBar() != null)
+        {
+            this.getSupportActionBar().hide();
+        }
+
+        tbsa = new PeersTab ( findViewById(R.id.tabBarPeers), this);
+        tabs = tbsa.addTabs(0);
+
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
+        {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab)
+            {
+                int tabPos = tabs.getSelectedTabPosition();
+                switch (tabPos)
+                {
+                    case 0:
+                    {
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(PeerActivity.this, FindFriendsActivity.class));
+                        break;
+                    }
+                    case 1:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(PeerActivity.this, ContactsActivity.class));
+                        break;
+                    }
+                    case 2:{
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(PeerActivity.this, RequestsActivity.class));
+                        break;
+                    }
+                    case 3: {
+                        tabs.clearOnTabSelectedListeners();
+                        startActivity(new Intent(PeerActivity.this, ProfileActivity.class));
+                        break;
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
 
         mAuth = FirebaseAuth.getInstance();
         peerRef = FirebaseDatabase.getInstance().getReference().child("UserInfo");
@@ -68,11 +131,31 @@ public class PeerActivity extends AppCompatActivity {
                     manageChatRequests();
                 }
                 else {
+                    String key = snapshot.getKey();
                     String peerUsername = snapshot.child("username").getValue().toString();
                     String peerName = snapshot.child("name").getValue().toString();
 
                     peerProfileUsername.setText(peerUsername);
                     peerProfileName.setText(peerName);
+                    //image
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+
+                    StorageReference picsChild = storage.getReference().child(key+".jpg");
+                    picsChild.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            peerProfileImage.setImageBitmap(bitmap);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Drawable draw = getResources().getDrawable(R.drawable.default_picture);
+                            Bitmap bitmap = ((BitmapDrawable) draw).getBitmap();
+                            peerProfileImage.setImageBitmap(bitmap);
+                        }
+                    });
+
 
                     manageChatRequests();
                 }
